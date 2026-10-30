@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>학점 관리</title>
+<style>
+@font-face{font-family:"Virgil";src:url("https://excalidraw.com/Virgil.woff2") format("woff2");font-display:swap}
+:root{
+  --bg:#08080b;--line:#22222b;--line2:#34343f;
+  --text:#ececf4;--dim:#8f8fa3;
+  --accent:#7c3aed;--accent2:#a78bfa;--sky:#4fc3f7;--blue:#3d7bff;
+  --font:"Virgil","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+*{box-sizing:border-box;font-family:var(--font)}
+html,body{overflow-x:hidden}
+html,body,*{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none;width:0;height:0}
+body{margin:0;background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 22px 48px}
+button,select,input{font:inherit;color:var(--text)}
+button{white-space:nowrap;background:transparent;border:none;padding:6px 10px;cursor:pointer;transition:.15s;border-radius:6px}
+button:hover{color:var(--accent2)}
+button.strong{color:var(--accent2);font-weight:700}
+input,select{background:transparent;border:none;border-bottom:1px solid var(--line2);padding:5px 4px;border-radius:0}
+input:focus,select:focus{outline:none;border-bottom-color:var(--accent2)}
+select{cursor:pointer}
+select option{background:#101015;color:var(--text)}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+button.rt{padding:2px 10px;font-weight:700;color:var(--dim)}
+button.rt.on{color:var(--accent2)}
+.rtlist{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;padding:4px 0}
+.rtlist span{cursor:pointer;color:var(--dim)}
+.rtlist span:hover{color:var(--accent2)}
+.rtlist span.dis{cursor:default}
+input[type=checkbox]{border:none;padding:0;width:18px;height:18px;accent-color:#7c3aed;cursor:pointer}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:30px}
+h1{font-size:34px;margin:0;font-weight:400}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+.hero{margin-bottom:28px}
+.label{color:var(--dim);font-size:13px}
+.gpa-big{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.gpa-big .num{font-size:72px;line-height:1.05;background:linear-gradient(135deg,#fff,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.gpa-big .of{color:var(--dim);margin-bottom:12px}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:10px 0 8px;max-width:520px}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--sky));border-radius:8px;transition:width .5s}
+.stats{display:flex;gap:46px;flex-wrap:wrap;margin-bottom:34px}
+.stat .v{font-size:30px;margin-top:2px}
+.stat .s{color:var(--dim);font-size:12px;margin-top:1px}
+
+.semtabs{display:flex;flex-wrap:wrap;gap:10px 22px;overflow:visible;padding:22px 2px 12px;border-top:1px solid var(--line)}
+.semtabs span,.tabs span{cursor:pointer;color:var(--dim);transition:.15s;flex:none}
+.semtabs span{font-size:15px}
+.semtabs span:hover,.tabs span:hover{color:var(--text)}
+.semtabs span.on,.tabs span.on{color:var(--accent2);font-weight:700}
+.tabs{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.tabs span{font-size:13px}
+.season{margin:2px 0 18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+
+.h{font-size:19px;margin:0 0 12px;font-weight:400}
+.semhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.semhead .t{font-size:28px}
+.sub{color:var(--dim);font-size:13px;margin-top:6px}
+.sub b{color:var(--accent2);font-weight:400;margin-right:10px}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;color:var(--dim);text-align:left;padding:4px 6px;font-weight:400;border-bottom:1px solid var(--line2)}
+td{padding:4px 6px;vertical-align:middle;border-bottom:1px solid var(--line)}
+td input,td select{width:100%;border-bottom-color:transparent}
+td input[type=checkbox]{width:18px}
+td input:hover,td select:hover{border-bottom-color:var(--line2)}
+td select.g{font-weight:700;text-align:center}
+td.c,th.c{text-align:center}
+.rg{display:block;text-align:center;color:var(--accent2);font-weight:700}
+.g-A{color:var(--sky)}.g-B{color:var(--blue)}.g-C{color:var(--accent2)}.g-D{color:#8b4cf5}.g-F{color:#fff}.g-P{color:var(--text)}.g-low{color:#ef5350}
+.note{color:var(--dim);font-size:12px;margin-top:12px;line-height:1.7}
+.empty{color:var(--dim);padding:24px 0}
+.sec{margin-top:40px;border-top:1px solid var(--line);padding-top:24px}
+
+.two{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;margin-top:40px;border-top:1px solid var(--line);padding-top:24px}
+@media(max-width:800px){.two{grid-template-columns:1fr;gap:28px}}
+.legend{display:flex;gap:16px;margin-bottom:6px;color:var(--dim);font-size:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+svg text{fill:var(--dim);font-size:11px;font-family:var(--font)}
+.dist{display:flex;flex-direction:column;gap:10px}
+.drow{display:grid;grid-template-columns:30px 1fr 28px;gap:10px;align-items:center;font-size:13px}
+.drow .tr{height:10px}
+.drow .tr i{display:block;height:100%;border-radius:8px;transition:width .5s}
+#toast{position:fixed;right:20px;bottom:20px;color:var(--accent2);font-size:13px;opacity:0;transition:.25s;pointer-events:none}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>학점 관리</h1>
+    <div class="tools">
+      <button id="btnExport">백업 내보내기</button>
+      <button id="btnImport">백업 불러오기</button>
+      <input type="file" id="file" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="label">누적 평점</div>
+    <div class="gpa-big"><span class="num" id="gpaNum">—</span><span class="of">/ 4.5</span></div>
+    <div class="bar"><i id="gpaBar" style="width:0"></i></div>
+    <div class="label" id="gpaSub"></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="semtabs" id="semTabs"></div>
+  <div class="season" id="season"></div>
+
+  <div id="main"></div>
+
+  <div class="two">
+    <div>
+      <h3 class="h">평점 추이</h3>
+      <div class="legend"><span><i style="background:var(--sky)"></i>학기 평점</span><span><i style="background:var(--accent2)"></i>누적 평점</span></div>
+      <div id="chart"></div>
+    </div>
+    <div>
+      <h3 class="h">성적 분포</h3>
+      <div class="dist" id="dist"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="h">현재 학기 예상 평점</h3>
+    <div id="expOut"></div>
+  </div>
+</div>
+<div id="toast">저장됨</div>
+
+<script>
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const f2 = n => n.toFixed(2);
+
+const KEY = "gradeTracker.blank.v1";
+const TERMS = ["1학기","여름계절","2학기","겨울계절"];
+const TERM_SHORT = ["1","여름","2","겨울"];
+const GP = {"A+":4.5,"A0":4.0,"B+":3.5,"B0":3.0,"C+":2.5,"C0":2.0,"D+":1.5,"D0":1.0,"F":0};
+const GRADES = ["","A+","A0","B+","B0","C+","C0","D+","D0","F","P","NP"];
+const isSeasonal = t => t === 1 || t === 3;
+const gcls = g => !g ? "" : g==="P"||g==="NP" ? "g-P" : "CDF".includes(g[0]) ? "g-low" : "g-"+g[0];
+
+function normalize(d){
+  const ys = d.semesters.filter(s => s.grade == null && s.year).map(s => s.year);
+  const minY = ys.length ? Math.min(...ys) : 0;
+  d.semesters.forEach(s => {
+    if(s.grade == null) s.grade = Math.min(4, Math.max(1, (s.year || minY) - minY + 1));
+    s.courses.forEach(c => { if(c.retakeOf){ if(c.grade==="A+") c.grade = "A0"; if(c.expected==="A+") c.expected = "A0"; } if(c.major === undefined) c.major = !!(c.cat && c.cat.startsWith("전공")); });
+  });
+  return d;
+}
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.semesters) return normalize(d); }catch(e){}
+  return {semesters:[]};
+}
+
+let S = load();
+let cur = {grade:1, term:0};
+let seasonOpen = false, seasonGrade = 1, seasonTerm = 1;
+let toastT;
+
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); toast("저장됨"); }
+  catch(e){ toast("저장에 실패했어요. 백업 내보내기를 사용해 주세요."); }
+}
+function toast(m){ const t = document.getElementById("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove("on"), 1300); }
+const sorted = () => [...S.semesters].sort((a,b) => a.grade*10+a.term - (b.grade*10+b.term));
+const semName = s => `${s.grade}학년 ${TERMS[s.term]}`;
+const semShort = s => `${s.grade}-${TERM_SHORT[s.term]}`;
+function ensureSem(g,t){
+  let s = S.semesters.find(x => x.grade===g && x.term===t);
+  if(!s){ s = {id:uid(), grade:g, term:t, applyExp:false, courses:[]}; S.semesters.push(s); }
+  return s;
+}
+const curSem = () => ensureSem(cur.grade, cur.term);
+
+function eff(c){
+  let g = c.grade || (c._apply ? (c.expected || "") : "");
+  if(c.retakeOf && GP[g] !== undefined && GP[g] > GP["A0"]) g = "A0";
+  return g;
+}
+function globalRepl(){ const r = new Set(); S.semesters.forEach(x => x.courses.forEach(c => { if(c.retakeOf) r.add(c.retakeOf); })); return r; }
+function courseById(id){ for(const x of S.semesters) for(const c of x.courses) if(c.id===id) return c; return null; }
+let retakeOpen = null;
+function replacedSet(courses){ const r = new Set(); courses.forEach(c => { if(c.retakeOf) r.add(c.retakeOf); }); return r; }
+function stats(courses){
+  const repl = globalRepl();
+  let a=0,p=0,e=0,reg=0,ma=0,mp=0,me=0;
+  const dist = {"A+":0,"A0":0,"B+":0,"B0":0,"C+":0,"C0":0,"D+":0,"D0":0,"F":0};
+  courses.forEach(c => {
+    if(repl.has(c.id)) return;
+    const cr = Number(c.credits)||0, g = eff(c);
+    reg += cr;
+    if(g === "") return;
+    if(g === "P"){ e += cr; return; }
+    if(g === "NP") return;
+    const gp = GP[g];
+    a += cr; p += cr*gp; if(g !== "F") e += cr;
+    dist[g]++;
+    if(c.major){ ma += cr; mp += cr*gp; if(g !== "F") me += cr; }
+  });
+  return {reg, att:a, pts:p, earned:e, dist, gpa:a?p/a:0, mgpa:ma?mp/ma:0, mCred:me, hasGpa:a>0, hasM:ma>0};
+}
+const cs = (s, force) => s.courses.map(c => ({...c, _apply: force || !!s.applyExp}));
+const visibleSems = () => sorted();
+const allCourses = sems => sems.flatMap(s => cs(s));
+
+/* ---------- 렌더 ---------- */
+function renderHero(){
+  const t = stats(allCourses(visibleSems()));
+  document.getElementById("gpaNum").textContent = t.hasGpa ? f2(t.gpa) : "—";
+  document.getElementById("gpaBar").style.width = (t.hasGpa ? t.gpa/4.5*100 : 0) + "%";
+  document.getElementById("gpaSub").textContent = t.hasGpa ? `백분율 ${(t.gpa/4.5*100).toFixed(1)}% · 평점 반영 ${t.att}학점` : "성적이 입력된 과목이 없어요";
+  const cards = [
+    ["취득 학점", t.earned, `신청 ${t.reg}학점`],
+    ["전공 평점", t.hasM ? f2(t.mgpa) : "—", `전공 취득 ${t.mCred}학점`],
+  ];
+  document.getElementById("stats").innerHTML = cards.map(c => `<div class="stat"><div class="label">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
+}
+
+function tabList(){
+  const list = [];
+  for(let g=1; g<=4; g++){ list.push({grade:g,term:0}); list.push({grade:g,term:2}); }
+  S.semesters.filter(s => isSeasonal(s.term)).forEach(s => list.push({grade:s.grade,term:s.term}));
+  return list.sort((a,b) => a.grade*10+a.term - (b.grade*10+b.term));
+}
+function renderTabs(){
+  const el = document.getElementById("semTabs");
+  el.innerHTML = tabList().map(t => `<span class="${t.grade===cur.grade&&t.term===cur.term?"on":""}" onclick="pick(${t.grade},${t.term})">${t.grade}학년 ${TERMS[t.term]}</span>`).join("");
+}
+function renderSeason(){
+  const el = document.getElementById("season");
+  if(!seasonOpen){ el.innerHTML = `<button onclick="seasonOpen=true;renderSeason()">+ 계절학기</button>`; return; }
+  el.innerHTML = `
+    <div class="tabs">${[1,2,3,4].map(g=>`<span class="${g===seasonGrade?"on":""}" onclick="seasonGrade=${g};renderSeason()">${g}학년</span>`).join("")}</div>
+    <div class="tabs">${[[1,"여름계절"],[3,"겨울계절"]].map(t=>`<span class="${t[0]===seasonTerm?"on":""}" onclick="seasonTerm=${t[0]};renderSeason()">${t[1]}</span>`).join("")}</div>
+    <button class="strong" onclick="addSeason()">추가</button><button onclick="seasonOpen=false;renderSeason()">닫기</button>`;
+}
+function addSeason(){
+  ensureSem(seasonGrade, seasonTerm); cur = {grade:seasonGrade, term:seasonTerm}; seasonOpen = false; save(); renderAll();
+}
+
+function renderMain(){
+  const el = document.getElementById("main");
+  const sem = curSem();
+  const st = stats(cs(sem));
+  const repl = globalRepl();
+  const before = [];
+  for(const s of sorted()){ if(s.id === sem.id) break; before.push(...s.courses); }
+
+  const rows = sem.courses.map(c => {
+    const tgt = c.retakeOf ? courseById(c.retakeOf) : null;
+    let rcell;
+    if(retakeOpen === c.id){
+      const cands = before.filter(o => o.grade && GP[o.grade] !== undefined && GP[o.grade] <= GP["C+"] && (!repl.has(o.id) || c.retakeOf===o.id));
+      rcell = `<div class="rtlist">` + (cands.length ? cands.map(o=>`<span onclick="setRetake('${c.id}','${o.id}')">${esc(o.name||"(이름 없음)")} (${o.grade})</span>`).join("") : '<span class="dis">재수강할 수 있는 과목이 없어요</span>') + `<span onclick="setRetake('${c.id}','')">x</span><span onclick="retakeOpen=null;renderAll()">닫기</span></div>`;
+    } else {
+      rcell = `<button class="rt ${tgt?"on":""}" onclick="openRetake('${c.id}')">${tgt?"o":"x"}</button>` + (tgt ? `<span class="label"> ${esc(tgt.name||"(이름 없음)")} (${tgt.grade})</span>` : "");
+    }
+    const capped = c.retakeOf && GP[c.grade] > GP["A0"];
+    return `<tr>
+      <td style="width:30%"><input value="${esc(c.name)}" onchange="upd('${c.id}','name',this.value)" placeholder="과목명"></td>
+      <td style="width:9%"><input type="number" min="0" step="1" value="${esc(c.credits)}" onchange="upd('${c.id}','credits',this.value)"></td>
+      <td style="width:14%">${repl.has(c.id)?'<span class="rg">R</span>':`<select class="g ${gcls(c.grade)}" onchange="upd('${c.id}','grade',this.value)">${GRADES.filter(g=>!(c.retakeOf&&g==="A+")).map(g=>`<option value="${g}" ${c.grade===g?"selected":""}>${g||"미입력"}</option>`).join("")}</select>`}${capped?'<div class="note" style="margin:0;text-align:center;color:var(--sky)">A0 상한</div>':''}</td>
+      <td class="c" style="width:8%"><input type="checkbox" ${c.major?"checked":""} onchange="upd('${c.id}','major',this.checked)"></td>
+      <td style="width:28%">${rcell}</td>
+      <td style="width:11%;white-space:nowrap"><button onclick="delCourse('${c.id}')">${pendingDel===c.id?"삭제?":"✕"}</button></td></tr>`;
+  }).join("");
+
+  el.innerHTML = `
+    <div class="semhead">
+      <div><div class="t">${semName(sem)}</div>
+        <div class="sub"><b>평점 ${st.hasGpa?f2(st.gpa):"—"}</b><b>전공 ${st.hasM?f2(st.mgpa):"—"}</b><b>취득 ${st.earned}</b></div></div>
+      <div><button onclick="addCourse()">+ 과목 추가</button><button onclick="delSem()">${pendingSem?"정말 삭제?":"학기 삭제"}</button></div>
+    </div>
+    <table><thead><tr><th>과목명</th><th>학점</th><th>성적</th><th class="c">전공</th><th>재수강</th><th></th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="6" class="empty">과목을 추가해 주세요.</td></tr>'}</tbody></table>
+    <p class="note">P는 취득 학점에 들어가고 평점에서는 빠져요. 재수강 칸의 x를 누르면 이전 학기의 C+ 이하 과목을 고를 수 있고, 성적은 A0로 제한돼요. 고른 이전 과목은 성적이 R로 바뀌고 평점·취득 학점에서 빠지지만 목록에는 남아요.</p>`;
+}
+
+/* ---------- 차트·분포·예상 ---------- */
+function renderChart(){
+  const sems = visibleSems(); const pts = []; const acc = [];
+  sems.forEach(s => { acc.push(...cs(s)); const a = stats(cs(s)), c = stats(acc); if(a.hasGpa) pts.push({n:semShort(s), a:a.gpa, c:c.gpa}); });
+  const el = document.getElementById("chart");
+  if(!pts.length){ el.innerHTML = '<div class="empty">성적이 입력된 학기가 생기면 표시돼요.</div>'; return; }
+  const W = 640, H = 230, pl = 32, pr = 16, pt = 14, pb = 42;
+  const x = i => pts.length === 1 ? (W+pl-pr)/2 : pl + i*(W-pl-pr)/(pts.length-1);
+  const y = v => pt + (4.5-Math.min(4.5,Math.max(3,v)))/1.5*(H-pt-pb);
+  const path = k => pts.map((p,i)=>`${x(i)},${y(p[k])}`).join(" ");
+  const dots = (k,col) => pts.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p[k])}" r="4" fill="#08080b" stroke="${col}" stroke-width="2.5"/>`).join("");
+  let g = ""; [3,3.5,4,4.5].forEach(v => g += `<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#1c1c24"/><text x="2" y="${y(v)+4}">${v}</text>`);
+  const labels = pts.map((p,i)=>`<text x="${x(i)}" y="${H-24}" text-anchor="middle">${p.n}</text><text x="${x(i)}" y="${H-10}" text-anchor="middle" style="fill:#a78bfa">${f2(p.c)}</text>`).join("");
+  const area = pts.length>1 ? `<polygon points="${x(0)},${y(3)} ${path("c")} ${x(pts.length-1)},${y(3)}" fill="url(#ag)"/>` : "";
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c3aed" stop-opacity=".28"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></linearGradient></defs>
+    ${g}${area}<polyline fill="none" stroke="#4fc3f7" stroke-width="2.5" stroke-linejoin="round" points="${path("a")}"/><polyline fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linejoin="round" points="${path("c")}"/>${dots("a","#4fc3f7")}${dots("c","#a78bfa")}${labels}</svg>`;
+}
+function renderDist(){
+  const t = stats(allCourses(visibleSems()));
+  const defs = [["A+","#4fc3f7"],["A0","#2e8fbd"],["B+","#3d7bff"],["B0","#2757c7"],["C+","#ff7a7a"],["C0","#ef5350"],["D+","#d63c3c"],["D0","#b02a2a"],["F","#8c1f1f"]];
+  const max = Math.max(1, ...defs.map(d => t.dist[d[0]]));
+  document.getElementById("dist").innerHTML = defs.map(d => `<div class="drow"><b>${d[0]}</b><div class="tr"><i style="width:${t.dist[d[0]]/max*100}%;background:${d[1]}"></i></div><span>${t.dist[d[0]]}</span></div>`).join("");
+}
+function renderExp(){
+  const o = document.getElementById("expOut");
+  const sem = curSem();
+  const repl = globalRepl();
+  const rows = sem.courses.filter(c => !repl.has(c.id)).map(c => {
+    const cell = c.grade
+      ? `<span class="label ${gcls(c.grade)}">확정 ${c.grade}</span>`
+      : `<select class="g ${gcls(c.expected)}" onchange="updExp('${c.id}',this.value)">${GRADES.filter(g=>!(c.retakeOf&&g==="A+")).map(g=>`<option value="${g}" ${c.expected===g?"selected":""}>${g||"미입력"}</option>`).join("")}</select>`;
+    return `<tr><td style="width:55%">${esc(c.name)||'<span class="label">(이름 없음)</span>'}</td><td style="width:15%">${c.credits}학점</td><td>${cell}</td></tr>`;
+  }).join("");
+  if(!rows){ o.innerHTML = `<div class="sub">${semName(sem)}에 과목을 추가하면 예상 성적을 입력할 수 있어요.</div>`; return; }
+  const others = visibleSems().filter(s => s.id !== sem.id).flatMap(s => cs(s));
+  const exp = stats(cs(sem, true));
+  const cum = stats([...others, ...cs(sem, true)]);
+  const on = !!sem.applyExp;
+  o.innerHTML = `
+    <div class="sub" style="margin:0 0 10px">${semName(sem)} · 성적이 확정된 과목은 확정 성적이 우선돼요.</div>
+    <table><tbody>${rows}</tbody></table>
+    <div class="sub" style="margin-top:14px">
+      예상 학기 평점 <b>${exp.hasGpa?f2(exp.gpa):"—"}</b> 반영 시 누적 평점 <b>${cum.hasGpa?f2(cum.gpa):"—"}</b> 취득 학점 <b>${cum.earned}</b> 전공 평점 <b>${cum.hasM?f2(cum.mgpa):"—"}</b>
+    </div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:12px">
+      <button class="strong" onclick="toggleApply()">${on?"반영 취소":"반영"}</button>
+      <button onclick="resetExp()">${pendingReset?"정말 초기화?":"예상 초기화"}</button>
+      <span class="label">${on?"상단 누적 평점·취득 학점·전공 평점에 포함되어 있어요.":"아직 상단 수치에 포함되지 않았어요."}</span>
+    </div>`;
+}
+function updExp(id,v){ const c = curSem().courses.find(x=>x.id===id); c.expected = v; save(); renderAll(); }
+let pendingReset = false;
+function resetExp(){
+  if(!pendingReset){ pendingReset = true; renderAll(); setTimeout(()=>{ if(pendingReset){ pendingReset = false; renderAll(); } }, 3000); return; }
+  pendingReset = false;
+  const s = curSem(); s.courses.forEach(c => { c.expected = ""; }); s.applyExp = false;
+  save(); renderAll(); toast("예상 성적을 초기화했어요");
+}
+function toggleApply(){ const s = curSem(); s.applyExp = !s.applyExp; save(); renderAll(); }
+
+function renderAll(){ renderHero(); renderTabs(); renderSeason(); renderMain(); renderChart(); renderDist(); renderExp(); }
+
+/* ---------- 동작 ---------- */
+function pick(g,t){ retakeOpen = null; pendingDel = null; pendingSem = false; pendingReset = false; cur = {grade:g, term:t}; ensureSem(g,t); renderAll(); }
+function addCourse(){ curSem().courses.push({id:uid(),name:"",credits:3,major:false,grade:"",expected:"",retakeOf:""}); save(); renderAll(); }
+function upd(id,k,v){
+  const c = curSem().courses.find(x=>x.id===id);
+  c[k] = k==="credits" ? Math.max(0, Number(v)||0) : v;
+  save(); renderAll();
+}
+let pendingDel = null, pendingSem = false;
+function armDel(kind,id){ if(kind==="c") pendingDel = id; else pendingSem = true; renderAll(); setTimeout(()=>{ if((kind==="c" && pendingDel===id) || (kind==="s" && pendingSem)){ pendingDel = null; pendingSem = false; renderAll(); } }, 3000); }
+function delCourse(id){ if(pendingDel !== id){ armDel("c", id); return; } pendingDel = null; const s = curSem(); s.courses = s.courses.filter(c=>c.id!==id); S.semesters.forEach(x=>x.courses.forEach(k=>{ if(k.retakeOf===id) k.retakeOf=""; })); save(); renderAll(); }
+function openRetake(id){ retakeOpen = id; renderAll(); }
+function setRetake(id,tid){ const c = curSem().courses.find(x=>x.id===id); c.retakeOf = tid; if(tid){ if(c.grade==="A+") c.grade = "A0"; if(c.expected==="A+") c.expected = "A0"; } retakeOpen = null; save(); renderAll(); }
+function delSem(){
+  const s = curSem();
+  if(!pendingSem){ armDel("s"); return; }
+  pendingSem = false;
+  if(isSeasonal(s.term)){ S.semesters = S.semesters.filter(x=>x.id!==s.id); cur = {grade:s.grade, term:2}; }
+  else { s.courses = []; s.applyExp = false; }
+  save(); renderAll();
+}
+
+document.getElementById("btnExport").onclick = () => {
+  const blob = new Blob([JSON.stringify(S,null,2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `grade-backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById("btnImport").onclick = () => document.getElementById("file").click();
+document.getElementById("file").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{ const d = JSON.parse(r.result); if(!d.semesters) throw 0;
+      S = normalize(d); save(); cur = {grade:1, term:0}; renderAll();
+    }catch(err){ toast("올바른 백업 파일이 아니에요."); }
+  };
+  r.readAsText(f); e.target.value = "";
+};
+
+if(navigator.storage && navigator.storage.persist) navigator.storage.persist();
+ensureSem(cur.grade, cur.term);
+renderAll();
+</script>
+</body>
+</html>
